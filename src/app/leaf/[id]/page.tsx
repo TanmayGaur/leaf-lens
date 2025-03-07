@@ -13,18 +13,18 @@ import { leafData } from "@/lib/data"
 export default function LeafDetail() {
   const params = useParams()
   const id = params?.id as string
-  const leaf = leafData.find((leaf) => leaf.id === id);
-  if(leaf === undefined){
-    return (
-        <div className="flex flex-col items-center justify-center min-h-screen px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Page Not Found</h2>
-          <p className="text-gray-600 mb-8">We couldn't find the leaf you're looking for.</p>
-          <Link href="/" className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
-            Return Home
-          </Link>
-        </div>
-      )
-  }
+  const leaf = leafData.find((leaf) => leaf.id === id) || leafData[0];
+  // if(leaf === undefined){
+  //   return (
+  //       <div className="flex flex-col items-center justify-center min-h-screen px-4 text-center">
+  //         <h2 className="text-3xl font-bold mb-4">Page Not Found</h2>
+  //         <p className="text-gray-600 mb-8">We couldn't find the leaf you're looking for.</p>
+  //         <Link href="/" className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
+  //           Return Home
+  //         </Link>
+  //       </div>
+  //     )
+  // }
   const [question, setQuestion] = useState("")
   const [messages, setMessages] = useState<{ text: string; isUser: boolean }[]>([])
   const handleSendQuestion = (e: React.FormEvent) => {
