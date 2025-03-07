@@ -83,7 +83,7 @@ export default function ContactPage() {
                   </div>
                   <h3 className="text-xl font-medium mb-2">Message Sent!</h3>
                   <p className="text-gray-500 mb-4">
-                    Thank you for reaching out. We'll get back to you as soon as possible.
+                    Thank you for reaching out. We&apos;ll get back to you as soon as possible.
                   </p>
                   <Button variant="outline" onClick={() => setIsSubmitted(false)}>
                     Send Another Message
