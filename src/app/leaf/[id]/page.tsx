@@ -155,7 +155,7 @@ export default function LeafDetail() {
                   <Input
                     placeholder="Type your question..."
                     value={question}
-                    onChange={(e) => setQuestion(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuestion(e.target.value)}
                   />
                   <Button type="submit" size="icon">
                     <Send className="h-4 w-4" />
