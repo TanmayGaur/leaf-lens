@@ -39,7 +39,7 @@ export default function Home() {
                     type="search" 
                     placeholder="Search for a leaf..." 
                     className="w-full pl-8 bg-white"
-                    onChange={(e) => { setSearchTerm(e.target.value) }} />
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setSearchTerm(e.target.value) }} />
                   </div>
                   <Button type="submit" variant="outline">Search</Button>
                 </form>
