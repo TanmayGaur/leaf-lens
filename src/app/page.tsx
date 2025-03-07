@@ -43,7 +43,7 @@ export default function Home() {
                   </div>
                   <Button type="submit" variant="outline">Search</Button>
                 </form>
-                <p className="text-xs text-gray-500">Try searching for "mint", "oak", or "basil"</p>
+                <p className="text-xs text-gray-500">Try searching for &quot;mint&quot;, &quot;oak&quot;, or &quot;basil&quot;</p>
               </div>
               <div className="flex flex-col sm:flex-row gap-4 mt-8">
                 <Button asChild size="lg" className="bg-green-600 hover:bg-green-700">
