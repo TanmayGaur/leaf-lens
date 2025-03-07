@@ -59,7 +59,7 @@ export default function ContactPage() {
           <Card>
             <CardHeader>
               <CardTitle>Get in Touch</CardTitle>
-              <CardDescription>Have questions or feedback about Leaf Lens? We'd love to hear from you.</CardDescription>
+              <CardDescription>Have questions or feedback about Leaf Lens? We&apos;d love to hear from you.</CardDescription>
             </CardHeader>
             <CardContent>
               {isSubmitted ? (
