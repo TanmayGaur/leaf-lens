@@ -25,11 +25,11 @@ export default function RootLayout({
           <div className="container flex h-16 items-center px-4 sm:px-6 lg:px-8">
             <Link href="/" className="flex items-center gap-2">
               <Image
-                src="/favicon.ico"
-                alt="Leaf Lens Logo"
-                width={32}
-                height={32}
-                className="rounded-sm w-auto h-auto"
+              src="/favicon.ico"
+              alt="Leaf Lens Logo"
+              width={32}
+              height={32}
+              className="rounded-sm"
               />
               <span className="text-xl font-bold">Leaf Lens</span>
             </Link>
