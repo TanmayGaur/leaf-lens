@@ -121,7 +121,7 @@ export default function LeafDetail() {
         <main className="flex-1 container px-4 py-6 md:py-12 flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold mb-4">Leaf Not Found</h1>
-            <p className="mb-6">We couldn't find information about this leaf.</p>
+            <p className="mb-6">We couldn&apos;t find information about this leaf.</p>
             <Button asChild>
               <Link href="/" className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">Return Home</Link>
             </Button>
