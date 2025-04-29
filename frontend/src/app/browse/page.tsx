@@ -5,12 +5,20 @@ import Image from "next/image"
 import { ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import { getAllLeaves } from "@/lib/api"
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination"
 import { useSearchParams } from "next/navigation"
 
 export default function BrowsePage() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <BrowsePageContent />
+    </Suspense>
+  );
+}
+
+function BrowsePageContent() {
   const searchParams = useSearchParams()
   interface Leaf {
     id: string;
@@ -30,6 +38,7 @@ export default function BrowsePage() {
             setLeafData(data)
           } catch (error) {
             console.error("Error fetching leaf:", error)
+            setLeafData([])
           } finally {
             setLoading(false)
           }
@@ -121,3 +130,15 @@ export default function BrowsePage() {
   )
 }
 
+function LoadingFallback() {
+  return (
+    <div className="flex flex-col min-h-screen">
+      <main className="flex-1 container px-4 py-6 md:py-12 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-green-600 border-r-transparent"></div>
+          <p className="mt-4 text-lg">Loading leaf information...</p>
+        </div>
+      </main>
+    </div>
+  );
+}
