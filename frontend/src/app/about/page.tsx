@@ -18,38 +18,43 @@ export default function AboutPage() {
 
         <div className="max-w-3xl mx-auto">
           <div className="prose prose-green lg:prose-lg">
-            <p className="lead">
-              Leaf Lens is a platform dedicated to helping people identify and learn about various types of leaves,
-              their benefits, and uses in nature and medicine.
+            <p className="mb-2">
+            Welcome to Leaf Lens, your pocket-sized botanical expert! This innovative project aims to make plant identification and learning accessible and engaging for everyone. Whether you&apos;re a seasoned botanist, a curious gardener, or simply someone intrigued by the natural world, Leaf Lens offers a powerful and intuitive way to explore the fascinating realm of leaves.
             </p>
 
             <h2 className="text-lg font-bold">Our Mission</h2>
-            <p>
-              Our mission is to connect people with the natural world by providing accessible, accurate information
-              about plants and their leaves. We believe that understanding the plants around us can lead to greater
-              appreciation for nature and more sustainable living practices.
+            <p className="mb-2">
+            At Leaf Lens, our mission is to bridge the gap between technology and nature. We strive to empower users with the knowledge to identify and understand the diverse plant life around them. By leveraging the latest advancements in artificial intelligence and user-friendly design, we&apos;ve created a platform that is both informative and enjoyable to use.
             </p>
 
-            <h2 className="text-lg font-bold">How It Works</h2>
-            <p>
-              Leaf Lens uses a combination of image recognition technology and a comprehensive database of plant
-              information to help users identify leaves and learn about their properties. Simply upload a photo of a
-              leaf or search for a specific plant, and our system will provide you with detailed information about it.
+            <h2 className="text-lg font-bold">How Leaf Lens Works</h2>
+            <p className="mb-2">
+            Leaf Lens offers two convenient ways to unlock information about the leaves you encounter:
+            </p>
+            <ul className="mb-2">
+              <li className="list-disc ml-6"><b>Image-Based Search:</b> Simply capture a clear photograph of a leaf using your device&apos;s camera or upload an existing image. Our intelligent system will analyze the visual characteristics and provide you with potential matches, along with detailed information about the identified plant.</li>
+              <li className="list-disc ml-6"><b>Text-Based Search:</b> If you already have some information about a leaf, you can directly search using keywords such as shape, color, or venation patterns.</li>
+            </ul>
+
+            <h2 className="text-lg font-bold">Engage with Our AI Chatbot</h2>
+            <p className="mb-2">
+            Curiosity piqued? Once a leaf is identified, you can delve deeper by engaging with our intelligent AI chatbot, powered by the cutting-edge Gemini API. Ask specific questions about the plant&apos;s properties, uses, habitat, or any other botanical inquiries you may have. Our AI is trained to provide informative and engaging responses, making learning an interactive experience.
             </p>
 
-            <h2 className="text-lg font-bold">Our Team</h2>
+            <h2 className="text-lg font-bold">Our Technology Stack</h2>
             <p>
-              Leaf Lens was created by a team of botanists, developers, and nature enthusiasts who share a passion for
-              plants and technology. Our experts continually update our database with the latest research and
-              information to ensure accuracy and relevance.
+              Behind the seamless user experience of Leaf Lens lies a robust and modern technology stack:
+            </p>
+            <ul className="list-disc ml-6 mb-4" >
+              <li><b>Frontend:</b> We&apos;ve built the intuitive and responsive user interface using Next.js, a powerful React framework known for its performance and developer-friendly features.</li>
+              <li><b>Backend:</b> Our server-side logic and API are powered by Django REST framework, providing a scalable and secure foundation for handling data and user requests.</li>
+              <li><b>Leaf Identification Model:</b> The core of our image recognition capability lies in a sophisticated deep learning model. We meticulously trained an Xception architecture using TensorFlow to create a highly accurate Keras model for leaf classification.</li>
+            </ul>
+            <h2 className="text-lg font-bold">Our Vision</h2>
+            <p className="mb-2">
+            As aspiring technologists and nature enthusiasts, we envision Leaf Lens as more than just a plant identification tool. We hope it sparks a greater appreciation for the natural world, encourages learning, and fosters a deeper connection between people and the environment.
             </p>
 
-            <h2 className="text-lg font-bold">Privacy and Data</h2>
-            <p>
-              We respect your privacy and handle all data with care. Images uploaded to Leaf Lens are used solely for
-              identification purposes and are not shared with third parties without consent. For more information,
-              please see our Privacy Policy.
-            </p>
           </div>
         </div>
       </main>

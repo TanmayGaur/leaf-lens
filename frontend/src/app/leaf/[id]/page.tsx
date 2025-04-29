@@ -1,6 +1,7 @@
 "use client"
+
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect} from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, MessageCircle, Send } from "lucide-react"
@@ -8,44 +9,129 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { useParams } from "next/navigation"
-import { leafData } from "@/lib/data"
+import { useParams, useSearchParams } from "next/navigation"
+import { sendChatMessage, searchLeaves, getLeafDetails } from "@/lib/api"
+
+
+interface Message {
+  content: string
+  role: "user" | "assistant"
+}
+
+interface Leaf {
+  id: string,
+  name: string,
+  image?: File,
+  summary: string,
+  scientific_name: string,
+  family: string,
+  native_region: string,
+  leaf_type: string,
+  benefits: { description: string }[],
+  uses: { category: string, description: string }[],
+  characteristics: { description: string }[],
+  cultivation: { description: string }[],
+  precautions: { description: string }[],
+  similarLeaves?: { id: string, name: string, image?: string }[],
+}
+
+
 export default function LeafDetail() {
   const params = useParams()
   const id = params?.id as string
-  const leaf = leafData.find((leaf) => leaf.id === id) || leafData[0];
-  // if(leaf === undefined){
-  //   return (
-  //       <div className="flex flex-col items-center justify-center min-h-screen px-4 text-center">
-  //         <h2 className="text-3xl font-bold mb-4">Page Not Found</h2>
-  //         <p className="text-gray-600 mb-8">We couldn't find the leaf you're looking for.</p>
-  //         <Link href="/" className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
-  //           Return Home
-  //         </Link>
-  //       </div>
-  //     )
-  // }
+  const [leaf, setLeaf] = useState<Leaf | null>(null)
+  const [loading, setLoading] = useState(true)
+  const searchParams = useSearchParams()
+  const search = searchParams?.get("search") as string
   const [question, setQuestion] = useState("")
-  const [messages, setMessages] = useState<{ text: string; isUser: boolean }[]>([])
-  const handleSendQuestion = (e: React.FormEvent) => {
+  const [messages, setMessages] = useState<Message[]>([])
+  const [isSending, setIsSending] = useState(false)
+
+  useEffect(() => {
+    async function fetchLeaf() {
+      try {
+        console.log("id",id)
+        console.log("search",search)
+        const leafData = id !== 's'? await getLeafDetails(id) : await searchLeaves(search)
+        setLeaf(leafData)
+        console.log("leafdata",leafData)
+      } catch (error) {
+        console.error("Error fetching leaf:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchLeaf()
+  }, [id,search])
+
+  const handleSendQuestion = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!question.trim()) return
-    // Add user message
-    setMessages((prev) => [...prev, { text: question, isUser: true }])
-    // Simulate AI response
-    setTimeout(() => {
+    if (!question.trim() || isSending) return
+    const history  = messages
+    setMessages((prev) => [...prev, { content: question, role: "user" }])
+    setIsSending(true)
+    
+    try {
+      // Get AI response from backend
+      if (!leaf) {
+        throw new Error("Leaf data is not available.");
+      }
+      const response = await sendChatMessage(question, leaf.id, history);
+
       setMessages((prev) => [
         ...prev,
         {
-          text: `Thank you for your question about ${leaf.name}. ${leaf.name} leaves are known for ${leaf.benefits[0].toLowerCase()}. Would you like to know more about specific uses or benefits?`,
-          isUser: false,
+          content: response,
+          role: "assistant",
         },
       ])
-    }, 1000)
-    setQuestion("")
+    } catch (error) {
+      console.error("Error getting chat response:", error)
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          content: "I'm sorry, I couldn't process your question. Please try again later.",
+          role: 'assistant',
+        },
+      ])
+    } finally {
+      setQuestion("")
+      setIsSending(false)
+    }
+  }
+  // console.log("leaf",leaf)
+
+  if (loading) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <main className="flex-1 container px-4 py-6 md:py-12 flex items-center justify-center">
+          <div className="text-center">
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-green-600 border-r-transparent"></div>
+            <p className="mt-4 text-lg">Loading leaf information...</p>
+          </div>
+        </main>
+      </div>
+    )
+  }
+  if (leaf === null || leaf === undefined) {
+    return (
+      <div className="flex flex-col min-h-screen">
+        <main className="flex-1 container px-4 py-6 md:py-12 flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-2xl font-bold mb-4">Leaf Not Found</h1>
+            <p className="mb-6">We couldn't find information about this leaf.</p>
+            <Button asChild>
+              <Link href="/" className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">Return Home</Link>
+            </Button>
+          </div>
+        </main>
+      </div>
+    )
   }
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen mt-4">
       <main className="flex-1 container px-4 py-6 md:py-12">
         <div className="flex items-center mb-6">
           <Button variant="ghost" size="icon" asChild className="mr-2">
@@ -60,35 +146,40 @@ export default function LeafDetail() {
           <div className="lg:col-span-2">
             <div className="rounded-lg overflow-hidden mb-6">
               <Image
-                src={leaf.image || "/placeholder.svg"}
+                src={typeof leaf.image === "string" ? leaf.image : leaf.image ? URL.createObjectURL(leaf.image) : "/placeholder.svg"}
                 alt={leaf.name}
                 width={800}
                 height={500}
-                className="max-h-96 object-cover "
+                className="w-full h-96 object-cover"
               />
             </div>
+
             <Tabs defaultValue="overview">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="flex flex-wrap h-auto justify-start gap-2 sm:h-10">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="benefits">Benefits</TabsTrigger>
                 <TabsTrigger value="uses">Uses</TabsTrigger>
+                <TabsTrigger value="characteristics">Characteristics</TabsTrigger>
+                <TabsTrigger value="cultivation">Cultivation</TabsTrigger>
+                <TabsTrigger value="precautions">Precautions</TabsTrigger>
               </TabsList>
               <TabsContent value="overview" className="p-4 border rounded-lg mt-2">
                 <h2 className="text-xl font-bold mb-2">About {leaf.name}</h2>
-                <p className="text-gray-700 mb-4">{leaf.description}</p>
+                <p className="text-gray-700 mb-4">{leaf.summary}</p>
+
                 <h3 className="text-lg font-semibold mb-2">Scientific Classification</h3>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="text-sm">
-                    <span className="font-medium">Scientific Name:</span> {leaf.scientificName}
+                    <span className="font-medium">Scientific Name:</span> {leaf.scientific_name}
                   </div>
                   <div className="text-sm">
                     <span className="font-medium">Family:</span> {leaf.family}
                   </div>
                   <div className="text-sm">
-                    <span className="font-medium">Native Region:</span> {leaf.nativeRegion}
+                    <span className="font-medium">Native Region:</span> {leaf.native_region}
                   </div>
                   <div className="text-sm">
-                    <span className="font-medium">Leaf Type:</span> {leaf.leafType}
+                    <span className="font-medium">Leaf Type:</span> {leaf.leaf_type}
                   </div>
                 </div>
               </TabsContent>
@@ -100,7 +191,7 @@ export default function LeafDetail() {
                       <div className="mr-2 mt-1 h-4 w-4 rounded-full bg-green-100 flex items-center justify-center">
                         <div className="h-2 w-2 rounded-full bg-green-600"></div>
                       </div>
-                      <span>{benefit}</span>
+                      <span>{benefit.description}</span>
                     </li>
                   ))}
                 </ul>
@@ -120,8 +211,48 @@ export default function LeafDetail() {
                   ))}
                 </div>
               </TabsContent>
+              <TabsContent value="characteristics" className="p-4 border rounded-lg mt-2">
+                <h2 className="text-xl font-bold mb-4">Physical characteristics</h2>
+                <ul className="space-y-2">
+                  {leaf.characteristics.map((characteristic, index) => (
+                    <li key={index} className="flex items-start">
+                      <div className="mr-2 mt-1 h-4 w-4 rounded-full bg-green-100 flex items-center justify-center">
+                        <div className="h-2 w-2 rounded-full bg-green-600"></div>
+                      </div>
+                      <span>{characteristic.description}</span>
+                    </li>
+                  ))}
+                </ul>
+              </TabsContent>
+              <TabsContent value="cultivation" className="p-4 border rounded-lg mt-2">
+                <h2 className="text-xl font-bold mb-4">Cultivation tips</h2>
+                <ul className="space-y-2">
+                  {leaf.cultivation.map((cultivation, index) => (
+                    <li key={index} className="flex items-start">
+                      <div className="mr-2 mt-1 h-4 w-4 rounded-full bg-green-100 flex items-center justify-center">
+                        <div className="h-2 w-2 rounded-full bg-green-600"></div>
+                      </div>
+                      <span>{cultivation.description}</span>
+                    </li>
+                  ))}
+                </ul>
+              </TabsContent>
+              <TabsContent value="precautions" className="p-4 border rounded-lg mt-2">
+                <h2 className="text-xl font-bold mb-4">Precautions</h2>
+                <ul className="space-y-2">
+                  {leaf.precautions.map((precaution, index) => (
+                    <li key={index} className="flex items-start">
+                      <div className="mr-2 mt-1 h-4 w-4 rounded-full bg-green-100 flex items-center justify-center">
+                        <div className="h-2 w-2 rounded-full bg-green-600"></div>
+                      </div>
+                      <span>{precaution.description}</span>
+                    </li>
+                  ))}
+                </ul>
+              </TabsContent>
             </Tabs>
           </div>
+
           <div>
             <Card>
               <CardHeader>
@@ -139,13 +270,13 @@ export default function LeafDetail() {
                     </div>
                   ) : (
                     messages.map((msg, index) => (
-                      <div key={index} className={`flex ${msg.isUser ? "justify-end" : "justify-start"}`}>
+                      <div key={index} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                         <div
                           className={`max-w-[80%] rounded-lg px-4 py-2 ${
-                            msg.isUser ? "bg-green-600 text-white" : "bg-gray-100 text-gray-800"
+                            msg.role === "user" ? "bg-green-600 text-white" : "bg-gray-100 text-gray-800"
                           }`}
                         >
-                          {msg.text}
+                          {msg.content}
                         </div>
                       </div>
                     ))
@@ -155,44 +286,18 @@ export default function LeafDetail() {
                   <Input
                     placeholder="Type your question..."
                     value={question}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuestion(e.target.value)}
+                    onChange={(e) => setQuestion(e.target.value)}
+                    disabled={isSending}
                   />
-                  <Button type="submit" size="icon">
-                    <Send className="h-4 w-4" />
+                  <Button type="submit" size="icon" disabled={isSending}>
+                    {isSending ? (
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-solid border-current border-r-transparent"></div>
+                    ) : (
+                      <Send className="h-4 w-4" />
+                    )}
                     <span className="sr-only">Send</span>
                   </Button>
                 </form>
-              </CardContent>
-            </Card>
-            <Card className="mt-6">
-              <CardHeader>
-                <CardTitle>Similar Leaves</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {leafData
-                    .filter((l) => l.id !== leaf.id)
-                    .slice(0, 3)
-                    .map((similarLeaf) => (
-                      <Link
-                        href={`/leaf/${similarLeaf.id}`}
-                        key={similarLeaf.id}
-                        className="flex items-center gap-3 hover:bg-gray-50 p-2 rounded-lg transition-colors"
-                      >
-                        <Image
-                          src={similarLeaf.image || "/placeholder.svg"}
-                          alt={similarLeaf.name}
-                          width={50}
-                          height={50}
-                          className="rounded-md object-cover w-12 h-12"
-                        />
-                        <div>
-                          <h3 className="font-medium">{similarLeaf.name}</h3>
-                          <p className="text-xs text-gray-500">{similarLeaf.family}</p>
-                        </div>
-                      </Link>
-                    ))}
-                </div>
               </CardContent>
             </Card>
           </div>

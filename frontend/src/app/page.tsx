@@ -5,21 +5,40 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import { checkBackendHealth } from "@/lib/api"
 
 export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const performHealthCheck = async () => {
+      const isHealthy = await checkBackendHealth();
+      if (!isHealthy) {
+        setErrorMessage("The backend service is currently unavailable. Please try again later.");
+      }
+    };
+
+    performHealthCheck();
+  }, []); 
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const leafName = searchTerm.trim().toLowerCase();
-    router.push(`/leaf/${leafName}`);
-  };
+    router.push(`/leaf/s/?search=${leafName}`);
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
       <main className="flex-1">
+      {errorMessage && (
+          <div className="bg-red-100 text-red-700 p-2 text-center">
+            {errorMessage}
+          </div>
+        )}
         <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gradient-to-b from-green-50 to-white">
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center space-y-4 text-center">
@@ -37,13 +56,14 @@ export default function Home() {
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
                     <Input 
                     type="search" 
+                    required
                     placeholder="Search for a leaf..." 
                     className="w-full pl-8 bg-white"
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setSearchTerm(e.target.value) }} />
+                    onChange={(e) => { setSearchTerm(e.target.value) }} />
                   </div>
                   <Button type="submit" variant="outline">Search</Button>
                 </form>
-                <p className="text-xs text-gray-500">Try searching for &quot;mint&quot;, &quot;oak&quot;, or &quot;basil&quot;</p>
+                <p className="text-xs text-gray-500">Try searching for &quot;tulsi&quot;, &quot;turmeric&quot;, or &quot;aloevera&quot;</p>
               </div>
               <div className="flex flex-col sm:flex-row gap-4 mt-8">
                 <Button asChild size="lg" className="bg-green-600 hover:bg-green-700">

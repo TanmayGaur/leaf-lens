@@ -37,24 +37,13 @@ export default function RootLayout({
               <Link href="/about" className="text-sm font-medium hover:underline">
                 About
               </Link>
-              <Link href="/contact" className="text-sm font-medium hover:underline">
-                Contact
-              </Link>
             </nav>
           </div>
         </header>
         {children}
-        <footer className="border-t bg-gray-50">
+        <footer className="border-t bg-gray-50 mt-4">
           <div className="container flex flex-col gap-2 sm:flex-row py-6 px-4 sm:px-6 lg:px-8 items-center justify-between">
             <p className="text-sm text-gray-500">© {new Date().getFullYear()} Leaf Lens. All rights reserved.</p>
-            <nav className="flex gap-4">
-              <Link href="/terms" className="text-sm text-gray-500 hover:underline">
-                Terms
-              </Link>
-              <Link href="/privacy" className="text-sm text-gray-500 hover:underline">
-                Privacy
-              </Link>
-            </nav>
           </div>
         </footer>
       </body>
