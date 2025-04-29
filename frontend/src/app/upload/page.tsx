@@ -54,7 +54,6 @@ export default function UploadPage() {
     try {
       // Upload the image to the backend
       const result = await uploadLeafImage(file)
-      console.log("result of upload",result)
       setIsUploading(false)
       setIsAnalyzing(true)
 

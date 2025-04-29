@@ -50,11 +50,8 @@ export default function LeafDetail() {
   useEffect(() => {
     async function fetchLeaf() {
       try {
-        console.log("id",id)
-        console.log("search",search)
         const leafData = id !== 's'? await getLeafDetails(id) : await searchLeaves(search)
         setLeaf(leafData)
-        console.log("leafdata",leafData)
       } catch (error) {
         console.error("Error fetching leaf:", error)
       } finally {
@@ -101,7 +98,6 @@ export default function LeafDetail() {
       setIsSending(false)
     }
   }
-  // console.log("leaf",leaf)
 
   if (loading) {
     return (
