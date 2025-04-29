@@ -19,7 +19,6 @@ interface RecognitionResult {
 }
 
 export default function UploadPage() {
-  const router = useRouter()
   const [file, setFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
