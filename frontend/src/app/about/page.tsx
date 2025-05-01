@@ -32,7 +32,7 @@ export default function AboutPage() {
             </p>
             <ul className="mb-2">
               <li className="list-disc ml-6"><b>Image-Based Search:</b> Capture or upload a leaf photo for precise identification and in-depth plant information.</li>
-              <li className="list-disc ml-6"><b>Text-Based Search:</b> Search by keywords like shape, color, or venation patterns for matching plants.</li>
+              <li className="list-disc ml-6"><b>Text-Based Search:</b> Search by keywords like name, leaf family, or scientific name for matching plants.</li>
             </ul>
 
             <h2 className="text-lg font-bold">AI Chatbot</h2>
