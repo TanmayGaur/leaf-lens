@@ -1,5 +1,5 @@
 @import "tailwindcss";
-/* @import "tw-animate-css"; */
+@import "tw-animate-css";
 
 :root {
   --color-background: var(--background);
@@ -120,9 +120,9 @@
 
 .container {
   width: 100%;
-  max-width: 1200px; /* Adjust as needed */
+  max-width: 1200px; 
   margin: 0 auto;
-  padding: 0 20px; /* Optional padding */
+  padding: 0 20px;
 }
 
 @theme inline {

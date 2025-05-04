@@ -118,10 +118,10 @@ function BrowsePageContent() {
                 <PaginationLink isActive>{page}</PaginationLink>
               </PaginationItem>
               <PaginationItem>
-                <PaginationLink href={`/browse/?page=${page+1}`} className={`${page === 8? "hidden":""}`}>{page+1}</PaginationLink>
+                <PaginationLink href={`/browse/?page=${page+1}`} className={`${page === 7? "hidden":""}`}>{page+1}</PaginationLink>
               </PaginationItem>
-              <PaginationEllipsis className={`${page === 8? "hidden":""}`}/>
-              <PaginationNext href={`/browse/?page=${page+1}`} className={`${page === 8? "hidden":""}`}/>
+              <PaginationEllipsis className={`${page === 7? "hidden":""}`}/>
+              <PaginationNext href={`/browse/?page=${page+1}`} className={`${page === 7? "hidden":""}`}/>
             </PaginationContent>
           </Pagination>
         </div>
